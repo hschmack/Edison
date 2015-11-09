@@ -40,15 +40,26 @@ class Profile(dbus.service.Object):
 
 		server_sock = socket.fromfd(self.fd, socket.AF_UNIX, socket.SOCK_STREAM)
 		server_sock.setblocking(1)
-		server_sock.send("This is Edison SPP loopback test\nAll data will be loopback\nPlease start:\n")
+
+
 
 		try:
 		    while True:
 		        data = server_sock.recv(1024)
 		        print("received: %s" % data)
-                #modify here to send back sensor data
-                # sensor0 = mraa.Aio(0)
-                # somehow put sensor0.read() into data
+		        s = 'START'
+		        if (data == s):
+		            print("Here")
+		            while True:
+		                x = mraa.Aio(0)
+		                x1 = mraa.Aio(1)
+		                x2 = mraa.Aio(2)
+		                x3 = mraa.Aio(3)
+		                x4 = mraa.Aio(4)
+		                y = str(x.read()) + ", " + str(x1.read()) + ", " + str(x2.read()) + ", " + str(x3.read())  + ", " + str(x4.read())
+		                server_sock.send("%s" % y)
+		                time.sleep(1)
+
 			server_sock.send("looping back: %s\n" % data)
 		except IOError:
 		    pass
@@ -56,7 +67,11 @@ class Profile(dbus.service.Object):
 		server_sock.close()
 		print("all done")
 
-
+	def sendSensorData(sock):
+		while True:
+		    s = 'poop'
+		    sock.send("%s" % s)
+		    time.sleep(2)
 
 	@dbus.service.method("org.bluez.Profile1",
 				in_signature="o", out_signature="")
