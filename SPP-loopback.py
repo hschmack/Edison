@@ -47,6 +47,8 @@ class Profile(dbus.service.Object):
 		        data = server_sock.recv(1024)
 		        print("received: %s" % data)
                 #modify here to send back sensor data
+                # sensor0 = mraa.Aio(0)
+                # somehow put sensor0.read() into data
 			server_sock.send("looping back: %s\n" % data)
 		except IOError:
 		    pass
